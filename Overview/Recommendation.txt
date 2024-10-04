@@ -28,3 +28,110 @@ Continuously update and refine the recommendations based on user interactions.
 
 3.Interaction - interactionId(pk), userId(fk), itemId(fk), action(view, like, purchase),timestamp(Dat and time).
 
+
+
+// Tables & joins
+CREATE TABLE UserProfile (
+    UserId INT PRIMARY KEY,
+    Name VARCHAR(100),
+    Email VARCHAR(100),
+    Gender VARCHAR(10),
+    Age INT,
+    Preferences TEXT
+);
+
+CREATE TABLE Item (
+    ItemId INT PRIMARY KEY,
+    Title VARCHAR(100),
+    Description TEXT,
+    Attributes JSON  -- Assuming attributes can be stored as JSON
+);
+
+CREATE TABLE Interaction (
+    InteractionId INT PRIMARY KEY,
+    UserId INT,
+    ItemId INT,
+    Action VARCHAR(20),  -- e.g., 'view', 'like', 'purchase'
+    Timestamp DATETIME,
+    FOREIGN KEY (UserId) REFERENCES UserProfile(UserId),
+    FOREIGN KEY (ItemId) REFERENCES Item(ItemId)
+);
+
+
+// getting user profiles
+SELECT 
+    u.UserId, 
+    u.Name, 
+    u.Email, 
+    u.Gender, 
+    u.Age, 
+    u.Preferences, 
+    i.ItemId, 
+    i.Title, 
+    i.Description, 
+    inter.Action, 
+    inter.Timestamp
+FROM 
+    UserProfile u
+LEFT JOIN 
+    Interaction inter ON u.UserId = inter.UserId
+LEFT JOIN 
+    Item i ON inter.ItemId = i.ItemId;
+
+// getting items from a specific user
+SELECT 
+    i.ItemId, 
+    i.Title, 
+    i.Description, 
+    inter.Timestamp
+FROM 
+    Interaction inter
+JOIN 
+    Item i ON inter.ItemId = i.ItemId
+WHERE 
+    inter.UserId = ? AND inter.Action = 'view';
+
+//count interactions by user and item
+SELECT 
+    u.UserId, 
+    u.Name, 
+    i.ItemId, 
+    i.Title, 
+    COUNT(inter.InteractionId) AS InteractionCount
+FROM 
+    UserProfile u
+LEFT JOIN 
+    Interaction inter ON u.UserId = inter.UserId
+LEFT JOIN 
+    Item i ON inter.ItemId = i.ItemId
+GROUP BY 
+    u.UserId, i.ItemId
+ORDER BY 
+    InteractionCount DESC;
+
+
+//get users who liked a specific item
+SELECT 
+    u.UserId, 
+    u.Name, 
+    u.Email 
+FROM 
+    Interaction inter
+JOIN 
+    UserProfile u ON inter.UserId = u.UserId
+WHERE 
+    inter.ItemId = ? AND inter.Action = 'like';
+
+
+// Get Items with Demographic Preferences:
+
+SELECT 
+    i.ItemId, 
+    i.Title, 
+    i.Description 
+FROM 
+    Item i
+WHERE 
+    JSON_CONTAINS(u.Preferences, JSON_QUOTE('desired_genre'))  -- Adjust based on preference structure
+    OR JSON_CONTAINS(u.Preferences, JSON_QUOTE('desired_category'));
+
