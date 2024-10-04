@@ -9,8 +9,15 @@
 }
 
 body {
-  background-color: rgba(255, 255, 255, 0.3);
+  color:rgba(0, 0, 0, 0.2);
 }
+.product-section {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.8), rgba(200, 200, 200, 0.8));
+  padding: 20px;
+  border-radius: 10px; 
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); 
+}
+
 p {
   color: black;
   font-size: 1.5rem;
@@ -53,6 +60,7 @@ h5 {
         height: 150px; /* Adjust height for smaller screens */
     }
 }
+
 
 
 @media (min-width: 768px) {
@@ -213,7 +221,7 @@ img {
   transform: translateX(-50%);
   width: 100%;
   text-align: center;
-  background-color: dodgerblue !important;
+  background-color: #bb3630 !important;
   padding: 2rem;
   z-index: 1000;
   background-image: url("https://unsplash.com/photos/a-brick-walkway-with-a-brick-wall-UlHSLdwP7I4") !important;
@@ -225,7 +233,7 @@ img {
     padding: 0.5rem;
   }
 }
-
+ 
 .card {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   max-width: 200px;
@@ -235,7 +243,8 @@ img {
   text-align: left;
   align-items: left;
   font-family: inherit;
-}
+  color: #BC7640;
+} 
 
 .price {
   color: grey;
