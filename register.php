@@ -7,15 +7,14 @@ if(isset($_SESSION['username'])) {
 }
 
 if(isset($_POST['submit'])) {
-    if($_POST['email'] == '' OR $_POST['username'] == '' OR $_POST['password'] == '') {
+    if($_POST['email'] == '' || $_POST['username'] == '' || $_POST['password'] == '') {
         $_SESSION['error'] = "Some inputs are empty.";
     } else {
         $email = $_POST['email'];
         $username = $_POST['username'];
         $password = $_POST['password'];
 
-        $insert = $conn->prepare("INSERT INTO users (email, username, password) 
-         VALUES (:email, :username, :password)");
+        $insert = $conn->prepare("INSERT INTO users (email, username, password) VALUES (:email, :username, :password)");
 
         if($insert->execute([
             ':email' => $email,
@@ -29,21 +28,34 @@ if(isset($_POST['submit'])) {
     }
 }
 
-// Handle success and error session messages without redirect
+// After handling the form, check for session messages
+if (isset($_SESSION['success'])) {
+    echo "<script>
+        swal({
+            title: 'Success!',
+            text: '{$_SESSION['success']}',
+            icon: 'success',
+            button: 'Okay',
+        });
+    </script>";
+    unset($_SESSION['success']); // Clear the message after displaying
+}
+
+if (isset($_SESSION['error'])) {
+    echo "<script>
+        swal({
+            title: 'Error!',
+            text: '{$_SESSION['error']}',
+            icon: 'error',
+            button: 'Okay',
+        });
+    </script>";
+    unset($_SESSION['error']); // Clear the message after displaying
+}
 ?>
 
-<!-- JavaScript for the popup -->
-<?php if (isset($_SESSION['success'])): ?>
-    <script>
-        alert("<?php echo $_SESSION['success']; ?>");
-    </script>
-    <?php unset($_SESSION['success']); ?>
-<?php elseif (isset($_SESSION['error'])): ?>
-    <script>
-        alert("<?php echo $_SESSION['error']; ?>");
-    </script>
-    <?php unset($_SESSION['error']); ?>
-<?php endif; ?>
+
+
 
 <main class="form-signin w-50 m-auto text-center">
   <form method="POST" action="register.php">
